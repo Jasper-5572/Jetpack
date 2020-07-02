@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.jasper.framework" >
+
+
+    <application>
+        <provider
+            android:authorities="${applicationId}.frameworkFileProvider"
+            android:name="androidx.core.content.FileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <!--元数据-->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/jasper_provider_file_paths" />
+        </provider>
+    </application>
+</manifest>

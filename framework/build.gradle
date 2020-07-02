@@ -1,0 +1,118 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion defaultConfigs.compileSdkVersion
+    buildToolsVersion defaultConfigs.buildToolsVersion
+    defaultConfig {
+        minSdkVersion defaultConfigs.minSdkVersion
+        targetSdkVersion defaultConfigs.targetSdkVersion
+        versionCode defaultConfigs.versionCode
+        versionName defaultConfigs.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    //指定jdk版本
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    //
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
+    api 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
+    api "androidx.appcompat:appcompat:$versions.appcompat"
+    api "androidx.recyclerview:recyclerview:${versions.recyclerview}"
+    api "com.google.android.material:material:$versions.material"
+//    testImplementation deps.basis.test_junit
+//    androidTestImplementation deps.basis.android_test_junit
+//    androidTestImplementation deps.basis.android_test_espresso
+
+    //======================================================kotlin========================================================
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    api "androidx.core:core-ktx:$versions.kotlin_core"
+
+    //======================================================kotlin  coroutines========================================================
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+
+    //======================================================okhttp3========================================================
+    api  "com.squareup.okhttp3:okhttp:${versions.okhttp3}"
+    api "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
+
+    //======================================================retrofit========================================================
+    api "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    api "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+    api "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+    api "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+
+
+//======================================================lifecycle========================================================
+    // runtime  Lifecycles only (without ViewModel or LiveData) (kotlin版本)
+    api "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+    // Saved state module for ViewModel
+    api "androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.lifecycle"
+    // extensions
+    api "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+    // viewmodel(kotlin版本)
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+    // livedata(kotlin版本)
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+    // lifecycle
+    //noinspection LifecycleAnnotationProcessorWithJava8
+//    kapt "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
+    // if using Java8, use the following instead of lifecycle-compiler
+    api "androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
+    // optional - helpers for implementing LifecycleOwner in a Service
+    api "androidx.lifecycle:lifecycle-service:$versions.lifecycle"
+    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+    api "androidx.lifecycle:lifecycle-process:$versions.lifecycle"
+    //  optional - ReactiveStreams support for LiveData kotlin版本
+    api "androidx.lifecycle:lifecycle-reactivestreams-ktx:$versions.lifecycle"
+
+}
+// 指定编码
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+// 打包源码
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+// 制作文档(Javadoc)
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+repositories {
+    mavenCentral()
+}

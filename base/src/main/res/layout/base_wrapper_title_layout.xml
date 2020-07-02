@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Jasper-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="44dp"
+    android:background="@color/colorMaster">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:padding="13dp"
+        android:src="@mipmap/base_ic_back_white"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_wrapper_title_name"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:maxWidth="240dp"
+        android:singleLine="true"
+        android:textColor="@color/colorTitle"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:ignore="RelativeOverlap" />
+
+    <ImageView
+        android:id="@+id/iv_wrapper_right_icon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
+        android:padding="10dp"
+        android:visibility="visible"
+        tools:ignore="ContentDescription,RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/tv_wrapper_right_text"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/colorTitle"
+        android:gravity="center"
+        android:paddingRight="15dp"
+        android:visibility="visible"
+        tools:ignore="RelativeOverlap,RtlHardcoded,RtlSymmetry" />
+</RelativeLayout>

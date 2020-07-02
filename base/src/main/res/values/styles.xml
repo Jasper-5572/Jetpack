@@ -1,0 +1,81 @@
+<resources>
+
+
+    <!--对话框从顶部进出-->
+    <style name="DialogDefaultStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!--对话框从顶部进出-->
+    <style name="DialogUpInUpOutStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/UpInUpOutAnimation</item>
+    </style>
+    <!--顶部进出动画-->
+    <style name="UpInUpOutAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@animator/animator_dialog_up_in</item>
+        <item name="android:windowExitAnimation">@animator/animator_dialog_up_out</item>
+    </style>
+
+
+    <!--对话框从底部进出-->
+    <style name="DialogDownInDownOutStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/DownInDownOutAnimation</item>
+    </style>
+
+    <!--底部进出动画-->
+    <style name="DownInDownOutAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@animator/animator_dialog_down_in</item>
+        <item name="android:windowExitAnimation">@animator/animator_dialog_down_out</item>
+    </style>
+
+
+    <!--对话框从左侧进出-->
+    <style name="DialogLeftInLeftOutStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/LeftInLeftOutAnimation</item>
+    </style>
+    <!--左侧进出动画-->
+    <style name="LeftInLeftOutAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@animator/animator_dialog_left_in</item>
+        <item name="android:windowExitAnimation">@animator/animator_dialog_left_out</item>
+    </style>
+
+
+    <!--对话框从右侧进出-->
+    <style name="DialogRightInRightUpOutStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/RightInRightUpAnimation</item>
+    </style>
+    <!--右侧进出动画-->
+    <style name="RightInRightUpAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@animator/animator_dialog_right_in</item>
+        <item name="android:windowExitAnimation">@animator/animator_dialog_right_out</item>
+    </style>
+</resources>

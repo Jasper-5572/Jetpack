@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Jasper-->
+<JasperFramework xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        description="Log是否显示（true,false）"
+        key="logDebug"
+        value="true" />
+    <item
+        description="OkHttp连接超时时间（MILLISECONDS）"
+        key="okHttpConnectTimeout"
+        value="20000" />
+    <item
+        description="OkHttp读取超时时间（MILLISECONDS）"
+        key="okHttpReadTimeout"
+        value="20000" />
+    <item
+        description="OkHttp写入超时时间（MILLISECONDS）"
+        key="okHttpWriteTimeout"
+        value="20000" />
+
+</JasperFramework>

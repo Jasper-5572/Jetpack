@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--轮播时间间隔-->
+    <attr name="playingIntervalTime" format="integer" />
+    <!--是否自动轮播-->
+    <attr name="autoPlaying" format="boolean" />
+    <!--是否显示指示器-->
+    <attr name="showIndicator" format="boolean" />
+    <!--方向-->
+    <attr name="bannerOrientation" format="enum">
+        <enum name="horizontal" value="0" />
+        <enum name="vertical" value="1" />
+    </attr>
+
+
+
+
+</resources>

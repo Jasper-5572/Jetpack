@@ -1,0 +1,261 @@
+//------------------------------ defaultConfigs -----------------------------------
+def defaultConfigs = [:]
+defaultConfigs.compileSdkVersion = 29
+defaultConfigs.buildToolsVersion = "29.0.3"
+defaultConfigs.minSdkVersion = 17
+defaultConfigs.targetSdkVersion = 29
+defaultConfigs.versionCode = 100
+defaultConfigs.versionName = "1.0.0"
+ext.defaultConfigs = defaultConfigs
+
+//------------------------------ versions -----------------------------------
+def versions = [:]
+//appcompat
+versions.appcompat = "1.1.0"
+//kotlin
+versions.kotlin = "1.3.72"
+//room
+versions.room = "2.2.5"
+//lifecycle
+versions.lifecycle = "2.2.0"
+//liveData TEST
+versions.live_data_test = "2.1.0"
+//nav_test
+versions.navigation = "2.3.0-alpha06"
+//retrofit  http客户端框架
+versions.retrofit = "2.9.0"
+//okhttp3
+versions.okhttp3 = '4.7.2'
+versions.okhttp_logging_interceptor = '4.7.2'
+
+
+
+versions.latest = "+"
+versions.support = "28.0.0"
+versions.rxjava2 = "2.1.6"
+versions.rxandroid2 = "2.0.1"
+
+versions.glide = "4.10.0"
+versions.arch_core = "1.1.0"
+versions.dagger = "2.11"
+versions.junit = "4.12"
+versions.espresso = "3.0.1"
+versions.mockwebserver = "3.8.1"
+versions.apache_commons = "2.5"
+versions.mockito = "2.7.19"
+versions.mockito_all = "1.10.19"
+versions.dexmaker = "2.2.0"
+versions.constraint_layout = "1.0.2"
+versions.timber = "4.5.1"
+versions.android_gradle_plugin = "3.0.1"
+versions.atsl_runner = "1.0.1"
+versions.atsl_rules = "1.0.1"
+versions.hamcrest = "1.3"
+versions.paging = "1.0.0-alpha5"
+versions.smartrefresh = "1.0.5"
+ext.versions = versions
+
+ext.deps = [:]
+
+def support = [:]
+support.annotations = "com.android.support:support-annotations:$versions.support"
+support.appcompat = "com.android.support:appcompat-v7:$versions.support"
+support.recyclerview = "com.android.support:recyclerview-v7:$versions.support"
+support.cardview = "com.android.support:cardview-v7:$versions.support"
+support.gridlayout = "com.android.support:gridlayout-v7:$versions.support"
+support.design = "com.android.support:design:$versions.support"
+support.v4 = "com.android.support:support-v4:$versions.support"
+support.core_utils = "com.android.support:support-core-utils:$versions.support"
+deps.support = support
+
+
+//=============================================================== basis ===============================================================
+def basis = [:]
+//implementation deps.basis.appcompat
+basis.appcompat = "androidx.appcompat:appcompat:$versions.appcompat"
+//implementation deps.basis.constraintlayout
+basis.constraintlayout = "androidx.constraintlayout:constraintlayout:1.1.3"
+//testImplementation deps.basis.test_junit
+basis.test_junit = "junit:junit:4.12"
+//androidTestImplementation deps.basis.android_test_junit
+basis.android_test_junit = "androidx.test.ext:junit:1.1.1"
+//androidTestImplementation deps.basis.android_test_espresso
+basis.android_test_espresso = "androidx.test.espresso:espresso-core:3.2.0"
+deps.basis = basis
+
+
+//=============================================================== room ===============================================================
+def room = [:]
+//implementation deps.room.runtime
+room.runtime = "androidx.room:room-runtime:$versions.room"
+//annotationProcessor deps.room.compiler  For Kotlin use kapt instead of annotationProcessor
+room.annotation_compiler = "androidx.room:room-compiler:$versions.room"
+//implementation deps.room.ktx   ->ptional - Kotlin Extensions and Coroutines support for Room
+room.ktx = "androidx.room:room-ktx:$versions.room"
+//implementation deps.room.rxjava2  ->optional - RxJava support for Room
+room.rxjava2 = "androidx.room:room-rxjava2:$versions.room"
+//implementation deps.room.guava -> optional - Guava support for Room, including Optional and ListenableFuture
+room.guava = "androidx.room:room-guava:$versions.room"
+//testImplementation deps.room.testing  ->Test helpers
+room.testing = "android.arch.persistence.room:testing:$versions.room"
+deps.room = room
+
+
+//=============================================================== lifecycle ===============================================================
+def lifecycle = [:]
+//implementation deps.lifecycle.runtime_java  ->(java版本)  Lifecycles only (without ViewModel or LiveData)
+lifecycle.runtime_java = "androidx.lifecycle:lifecycle-runtime:$versions.lifecycle"
+//implementation deps.lifecycle.runtime_kotlin ->(kotlin版本) Lifecycles only (without ViewModel or LiveData)
+lifecycle.runtime_kotlin = "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+//implementation deps.lifecycle.viewmodel_savedstate        ->Saved state module for ViewModel
+lifecycle.viewmodel_savedstate = "androidx.lifecycle:lifecycle-viewmodel-savedstate:$versions.lifecycle"
+//implementation deps.lifecycle.extensions
+lifecycle.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+//implementation deps.lifecycle.viewmodel_java ->(java版本)
+lifecycle.viewmodel_java = "androidx.lifecycle:lifecycle-viewmodel:$versions.lifecycle"
+//implementation deps.lifecycle.viewmodel_kotlin ->(kotlin版本)
+lifecycle.viewmodel_kotlin = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+//implementation deps.lifecycle.livedata_java ->(java版本)
+lifecycle.livedata_java = "androidx.lifecycle:lifecycle-livedata:$versions.lifecycle"
+//implementation deps.lifecycle.livedata_kotlin ->(kotlin版本)
+lifecycle.livedata_kotlin = "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+//annotationProcessor deps.lifecycle.compiler -> kapt deps.lifecycle.compiler
+lifecycle.compiler = "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
+//implementation deps.lifecycle.java8   ->if using Java8, use the following instead of lifecycle-compiler
+lifecycle.java8 = "androidx.lifecycle:lifecycle-common-java8:$versions.lifecycle"
+//implementation deps.lifecycle.service   ->optional - helpers for implementing LifecycleOwner in a Service
+lifecycle.service = "androidx.lifecycle:lifecycle-service:$versions.lifecycle"
+//implementation deps.lifecycle.process  ->optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+lifecycle.process = "androidx.lifecycle:lifecycle-process:$versions.lifecycle"
+//implementation deps.lifecycle.reactivestreams_java ->(java版本)  optional - ReactiveStreams support for LiveData
+lifecycle.reactivestreams_java = "androidx.lifecycle:lifecycle-reactivestreams:$versions.lifecycle"
+//implementation deps.lifecycle.reactivestreams_kotlin ->(kotlin版本)  optional - ReactiveStreams support for LiveData
+lifecycle.reactivestreams_kotlin = "androidx.lifecycle:lifecycle-reactivestreams-ktx:$versions.lifecycle"
+//testImplementation deps.lifecycle.testing->   optional Test helpers for LiveData
+lifecycle.testing = "androidx.arch.core:core-testing:$versions.live_data_test"
+deps.lifecycle = lifecycle
+
+
+//=============================================================== navigation ===============================================================
+def navigation = [:]
+//implementation  deps.navigation.fragment_java
+navigation.fragment_java = "androidx.navigation:navigation-fragment:$versions.navigation"
+//implementation  deps.navigation.fragment_kotlin
+navigation.fragment_kotlin = "androidx.navigation:navigation-fragment-ktx:$versions.navigation"
+//implementation  deps.navigation.ui_java
+navigation.ui_java = "androidx.navigation:navigation-ui:$versions.navigation"
+//implementation  deps.navigation.ui_kotlin
+navigation.ui_kotlin = "androidx.navigation:navigation-ui-ktx:$versions.navigation"
+//implementation  deps.navigation.dynamic_features_fragment  Dynamic Feature Module Support
+navigation.dynamic_features_fragment = "androidx.navigation:navigation-dynamic-features-fragment:$versions.navigation"
+//androidTestImplementation  deps.navigation.testing     Testing Navigation
+navigation.testing = "androidx.navigation:navigation-testing:$versions.navigation"
+deps.navigation = navigation
+
+
+//=============================================================== kotlin 基础库及相关库的kotlin扩展===============================================================
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+//implementation deps.kotlin.core_ktx
+kotlin.core_ktx = "androidx.core:core-ktx:1.2.0"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+
+//implementation "androidx.activity:activity-ktx:1.1.0"
+//implementation "androidx.fragment:fragment-ktx:1.2.4"
+//implementation "androidx.benchmark:benchmark-junit4:1.0.0"
+//implementation "androidx.collection:collection-ktx:1.1.0"
+//implementation "androidx.dynamicanimation:dynamicanimation-ktx:1.0.0-alpha03"
+//implementation "androidx.fragment:fragment-testing:1.2.4"
+deps.kotlin = kotlin
+
+
+//===============================================================kotlin协程 coroutines ===============================================================
+def coroutines = [:]
+//implementation deps.coroutines.android
+coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0"
+//implementation deps.coroutines.core
+coroutines.core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0"
+deps.coroutines = coroutines
+
+//===============================================================retrofit  http客户端框架===============================================================
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.mock = "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+retrofit.adapter = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+deps.retrofit = retrofit
+
+
+//===============================================================okhttp3  网络请求框架===============================================================
+def okhttp3 = [:]
+okhttp3.okhttp = "com.squareup.okhttp3:okhttp:${versions.okhttp3}"
+okhttp3.logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
+deps.okhttp3 = okhttp3
+
+
+
+def arch_core = [:]
+arch_core.testing = "android.arch.core:core-testing:$versions.arch_core"
+deps.arch_core = arch_core
+
+
+
+def dagger = [:]
+dagger.runtime = "com.google.dagger:dagger:$versions.dagger"
+dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
+dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
+dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+dagger.android_support_compiler = "com.google.dagger:dagger-android-processor:$versions.dagger"
+deps.dagger = dagger
+
+def espresso = [:]
+espresso.core = "com.android.support.test.espresso:espresso-core:$versions.espresso"
+espresso.contrib = "com.android.support.test.espresso:espresso-contrib:$versions.espresso"
+espresso.intents = "com.android.support.test.espresso:espresso-intents:$versions.espresso"
+deps.espresso = espresso
+
+def atsl = [:]
+atsl.runner = "com.android.support.test:runner:$versions.atsl_runner"
+atsl.rules = "com.android.support.test:rules:$versions.atsl_runner"
+deps.atsl = atsl
+
+def mockito = [:]
+mockito.core = "org.mockito:mockito-core:$versions.mockito"
+mockito.all = "org.mockito:mockito-all:$versions.mockito_all"
+deps.mockito = mockito
+
+
+def refresh = [:]
+refresh.smartrefresh_layout = "com.scwang.smartrefresh:SmartRefreshLayout:$versions.smartrefresh"
+refresh.smartrefresh_header = "com.scwang.smartrefresh:SmartRefreshHeader:$versions.smartrefresh"
+refresh.smartrefresh_footer = "com.scwang.smartrefresh:SmartRefreshFooter:$versions.smartrefresh"
+deps.refresh = refresh
+
+deps.paging = "android.arch.paging:runtime:$versions.paging"
+deps.glide = "com.github.bumptech.glide:glide:$versions.glide"
+deps.dexmaker = "com.linkedin.dexmaker:dexmaker-mockito:$versions.dexmaker"
+deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+deps.timber = "com.jakewharton.timber:timber:$versions.timber"
+deps.junit = "junit:junit:$versions.junit"
+deps.mock_web_server = "com.squareup.okhttp3:mockwebserver:$versions.mockwebserver"
+deps.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+deps.rxandroid2 = "io.reactivex.rxjava2:rxandroid:$versions.rxandroid2"
+deps.hamcrest = "org.hamcrest:hamcrest-all:$versions.hamcrest"
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+deps.system_status_bar = "com.readystatesoftware.systembartint:systembartint:1.0.3"
+ext.deps = deps
+
+
+static def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+ext.addRepos = this.&addRepos
+
+
+
+
+
