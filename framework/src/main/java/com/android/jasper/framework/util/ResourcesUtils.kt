@@ -5,7 +5,6 @@ package com.android.jasper.framework.util
 import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
-import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
@@ -20,8 +19,8 @@ import com.android.jasper.framework.JasperFramework
 object ResourcesUtils {
 
     @JvmStatic
-    fun getDisplayMetrics(): DisplayMetrics? {
-        return getResource()?.displayMetrics
+    fun getDisplayMetrics(): DisplayMetrics {
+        return getResource().displayMetrics
     }
 
     /**
@@ -30,9 +29,9 @@ object ResourcesUtils {
      * @return Resources
      */
     @JvmStatic
-    fun getResource(): Resources? {
+    fun getResource(): Resources {
         return JasperFramework.INSTANCE.showActivity?.resources
-            ?: JasperFramework.INSTANCE.application?.resources
+                ?: JasperFramework.INSTANCE.application.resources
     }
 
     /**
@@ -44,7 +43,7 @@ object ResourcesUtils {
     @JvmStatic
     fun getString(@StringRes stringRes: Int): String {
         return try {
-            getResource()?.getString(stringRes) ?: ""
+            getResource().getString(stringRes)
         } catch (e: Resources.NotFoundException) {
             e.printStackTrace()
             ""
@@ -52,16 +51,11 @@ object ResourcesUtils {
     }
 
     @JvmStatic
+    @JvmOverloads
     @ColorInt
-    fun getColor(@ColorRes colorId: Int, theme: Resources.Theme?): Int {
+    fun getColor(@ColorRes colorId: Int, theme: Resources.Theme? = null): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getResource()?.getColor(colorId, theme) ?: View.NO_ID
+            getResource().getColor(colorId, theme)
         } else getColor(colorId)
-    }
-
-    @JvmStatic
-    @ColorInt
-    fun getColor(@ColorRes colorId: Int): Int {
-        return getColor(colorId,null)
     }
 }

@@ -9,10 +9,12 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
+import com.android.jasper.framework.expansion.setString
+
 
 /**
- *@author   Mr.Hu(Jc) OrgVTrade
- *@create   2019-11-06 15:09
+ *@author   Jasper
+ *@create   2020/5/21 15:08
  *@describe RecyclerView自定义ViewHolder
  *@update
  */
@@ -46,8 +48,8 @@ class RvViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder
     /**
      * 为TextView 设置数据
      */
-    fun setText(@IdRes viewId: Int, value: String): RvViewHolder {
-        getView<TextView>(viewId)?.text = value
+    fun setText(@IdRes viewId: Int, value: String?): RvViewHolder {
+        getView<TextView>(viewId)?.setString(value)
         return this
     }
 
@@ -55,7 +57,7 @@ class RvViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder
      * 为TextView 设置数据
      */
     fun setText(@IdRes viewId: Int, @StringRes valueId: Int): RvViewHolder {
-        getView<TextView>(viewId)?.setText(valueId)
+        getView<TextView>(viewId)?.setString(valueId)
         return this
     }
 

@@ -2,9 +2,7 @@ package com.android.jasper.framework.network.cookie
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.android.jasper.framework.util.StringUtils
 import okhttp3.Cookie
-import java.io.*
 
 /**
  *@author   Jasper
@@ -88,7 +86,7 @@ class SpCookieCache constructor(context: Context) : ICookieCache {
         }
     }
 
-    private val sharedPreferences: SharedPreferences by lazy {
+    private val sharedPreferences by lazy {
         context.getSharedPreferences(
             "jasperPersistentCookie",
             Context.MODE_PRIVATE

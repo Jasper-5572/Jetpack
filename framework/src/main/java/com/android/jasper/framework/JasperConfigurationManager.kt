@@ -2,7 +2,10 @@ package com.android.jasper.framework
 
 import android.content.Context
 import android.content.res.Resources.NotFoundException
-import okhttp3.Interceptor
+import com.android.jasper.framework.adapter.recycler_view.AdapterLayoutResBean
+import com.android.jasper.framework.network.UrlAdapter
+import com.android.jasper.framework.adapter.recycler_view.BaseAdapter
+import okhttp3.OkHttpClient
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import java.io.IOException
@@ -16,21 +19,27 @@ import java.io.IOException
 
 class JasperConfigurationManager {
     private val constantsConfigSet by lazy { hashSetOf<ConstantsConfigBean>() }
+    var jasperConfiguration: JasperConfiguration? = null
+        private set
+
     companion object {
         val INSTANCE by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { JasperConfigurationManager() }
     }
 
     internal fun initialize(context: Context, jasperConfiguration: JasperConfiguration?) {
         constantsConfigSet.clear()
-        //解析xml配置
-        val xmlConstantsSet = JasperXmlConfiguration().parseXml(context)
-        constantsConfigSet.addAll(xmlConstantsSet)
+
         //如果动态添加了相关配置
+        this.jasperConfiguration = jasperConfiguration
         jasperConfiguration?.constantsConfigSet?.let {
             constantsConfigSet.addAll(it)
         }
-
+        val xmlName = jasperConfiguration?.xmlConfigurationName ?: "jasper_framework_configuration"
+        //解析xml配置
+        val xmlConstantsSet = JasperXmlConfiguration().parseXml(context, xmlName)
+        constantsConfigSet.addAll(xmlConstantsSet)
     }
+
     /**
      * 根据对应的key获取配置的数据
      * @param key String
@@ -49,18 +58,32 @@ class JasperConfigurationManager {
     }
 }
 
-class JasperConfiguration {
+data class JasperConfiguration @JvmOverloads constructor(
     /**
-     * 常量配置
+     * 常量配置 优先代码配置 然后xml配置
+     *
      */
-    var constantsConfigSet: Set<ConstantsConfigBean>? = null
+    val constantsConfigSet: Set<ConstantsConfigBean>? = null,
 
     /**
-     * 拦截器配置
+     * 添加okhttp配置
      */
-    var interceptorList: MutableList<Interceptor>? = null
+    val addOkHttpConfig: (okhttp: OkHttpClient.Builder) -> Unit = { },
 
-}
+    /**
+     * 地址是配置
+     */
+    val urlAdapter: UrlAdapter? = null,
+
+    /**
+     * 默认为jasper_framework_configuration
+     */
+    val xmlConfigurationName: String = "jasper_framework_configuration",
+    /**
+     * recyclerView的通用adapter[BaseAdapter]
+     */
+    val adapterLayoutRes: AdapterLayoutResBean = AdapterLayoutResBean()
+)
 
 /**
  *
@@ -69,11 +92,14 @@ class JasperConfiguration {
  * @property description String?
  * @constructor
  */
-data class ConstantsConfigBean(val key: String?, val value: String?, val description: String?) {
+data class ConstantsConfigBean(
+    val key: String?,
+    val value: String?,
+    val description: String? = ""
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConstantsConfigBean) return false
-
         if (key != other.key) return false
         if (value != other.value) return false
         if (description != other.description) return false
@@ -96,10 +122,10 @@ private class JasperXmlConfiguration {
      * @param context Context
      * @throws NotFoundException
      */
-     fun parseXml(context: Context): Set<ConstantsConfigBean> {
+    fun parseXml(context: Context, xmlName: String): Set<ConstantsConfigBean> {
         val configurationSet = hashSetOf<ConstantsConfigBean>()
         val resourceId = context.resources.getIdentifier(
-            "jasper_framework_configuration",
+            xmlName,
             "xml",
             context.packageName
         )

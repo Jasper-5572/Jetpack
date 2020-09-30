@@ -111,17 +111,17 @@ class LoggerInterceptor : Interceptor {
         }
 
         //head
-        request.headers?.let { headers ->
+        request.headers.let { headers ->
             requestLogString.append("\n")
-                .append("HEADERS:{ ")
+                    .append("HEADERS:{ ")
             var i = 0
             val count = headers.size
             while (i < count) {
                 val name = headers.name(i)
                 if (!"Content-Type".equals(
-                        name,
-                        ignoreCase = true
-                    ) && !"Content-Length".equals(name, ignoreCase = true)
+                                name,
+                                ignoreCase = true
+                        ) && !"Content-Length".equals(name, ignoreCase = true)
                 ) {
                     requestLogString.append("$name:${headers.value(i)}").append(" , ")
                 }

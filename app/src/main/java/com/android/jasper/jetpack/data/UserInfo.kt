@@ -2,6 +2,7 @@ package com.android.jasper.jetpack.data
 
 import android.graphics.Bitmap
 import androidx.room.*
+import java.util.*
 
 /**
  *@author   Jasper
@@ -12,19 +13,23 @@ import androidx.room.*
 @Entity(
     tableName = "user_info",
     //phone 唯一
-    indices = [Index(value = ["phone"], unique = true)]
+    indices = [Index(value = ["phone", "user_id"], unique = true)]
 )
 data class UserInfo @JvmOverloads constructor(
-    @PrimaryKey
-    @ColumnInfo(name = "user_id")
-    var userId: String = ""
-) {
 
     /**
      * 手机号
      */
     @ColumnInfo(name = "phone")
     var phone: String = ""
+
+) {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    var id: Long = 0L
+
+    @ColumnInfo(name = "user_id")
+    var userId: String =""
 
     /**
      * 昵称

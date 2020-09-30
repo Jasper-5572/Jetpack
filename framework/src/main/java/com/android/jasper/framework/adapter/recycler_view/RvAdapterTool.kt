@@ -14,22 +14,22 @@ class RvAdapterTool {
      * 外层不同itemType,内层为注册相同的itemType,交给上层去区分
      * [RvTypeView.checkViewType]
      */
-    internal val mItemTypeArray: SparseArrayCompat<SparseArrayCompat<RvTypeView<*>>> by lazy { SparseArrayCompat<SparseArrayCompat<RvTypeView<*>>>() }
+     val mItemTypeArray: SparseArrayCompat<SparseArrayCompat<RvTypeView<*>>> by lazy { SparseArrayCompat<SparseArrayCompat<RvTypeView<*>>>() }
 
     /**
      * 数据map,key为itemType
      */
-    internal val mDataArray: SparseArrayCompat<List<*>?> by lazy { SparseArrayCompat<List<*>?>() }
+     val mDataArray: SparseArrayCompat<List<*>> by lazy { SparseArrayCompat<List<*>>() }
 
     /**
      * item单击监听集合 key为itemType
      */
-    internal val mItemClickListeners: SparseArrayCompat<RvItemListener.OnItemClickListener<*>> by lazy { SparseArrayCompat<RvItemListener.OnItemClickListener<*>>() }
+     val mItemClickListeners: SparseArrayCompat<RvItemListener.OnItemClickListener<*>> by lazy { SparseArrayCompat<RvItemListener.OnItemClickListener<*>>() }
 
     /**
      * item长按监听集合 key为itemType
      */
-    internal val mItemLongClickListeners: SparseArrayCompat<RvItemListener.OnItemLongClickListener<*>> by lazy { SparseArrayCompat<RvItemListener.OnItemLongClickListener<*>>() }
+     val mItemLongClickListeners: SparseArrayCompat<RvItemListener.OnItemLongClickListener<*>> by lazy { SparseArrayCompat<RvItemListener.OnItemLongClickListener<*>>() }
 
     /**
      * 临时保存itemType对应布局数据
@@ -96,10 +96,11 @@ class RvAdapterTool {
     ): Int {
         val typeArraySize = typeArray.size()
         for (index in typeArraySize - 1 downTo 0) {
-            val itemView = typeArray.valueAt(index)
-            if (itemView.checkType(data, position)) {
-                return typeArray.keyAt(index).apply {
-                    itemTypeArrayList.put(this, typeArray.get(this))
+            typeArray.valueAt(index)?.let {itemView->
+                if (itemView.checkType(data, position)) {
+                    return typeArray.keyAt(index).apply {
+                        itemTypeArrayList.put(this, typeArray.get(this))
+                    }
                 }
             }
         }
@@ -117,19 +118,18 @@ class RvAdapterTool {
         val dataListCount = mDataArray.size()
         var itemCount = 0
         for (i in dataListCount - 1 downTo 0) {
-            mDataArray.valueAt(i)?.let {list->
-                itemCount += list.size
-                //如果当前下标在当前过滤的所有list长度以内
-                if (position < itemCount) {
-                    val itemType = mDataArray.keyAt(i)
-                    mItemTypeArray.get(itemType)?.let {
-                        if (it.size() <= 1) {
-                            //如果添加的itemType数据只有一种类型，直接返回
-                            itemTypeArrayList.put(itemType, it.get(it.keyAt(0)))
-                            return itemType
-                        }
-                        return getItemViewType(it, list[position - (itemCount - list.size)], position)
+            val list = mDataArray.valueAt(i)
+            itemCount += list.size
+            //如果当前下标在当前过滤的所有list长度以内
+            if (position < itemCount) {
+                val itemType = mDataArray.keyAt(i)
+                mItemTypeArray.get(itemType)?.let {
+                    if (it.size() <= 1) {
+                        //如果添加的itemType数据只有一种类型，直接返回
+                        itemTypeArrayList.put(itemType, it.get(it.keyAt(0)))
+                        return itemType
                     }
+                    return getItemViewType(it, list[position - (itemCount - list.size)], position)
                 }
             }
         }
@@ -140,21 +140,20 @@ class RvAdapterTool {
         val dataListCount = mDataArray.size()
         var itemCount = 0
         for (i in dataListCount - 1 downTo 0) {
-            mDataArray.valueAt(i)?.let { list->
-                itemCount += list.size
-                //如果当前下标在当前过滤的所有list长度以内
-                if (position < itemCount) {
-                    val itemType = mDataArray.keyAt(i)
-                    mItemTypeArray.get(itemType)?.let {
-                        onConvert(
-                            it,
-                            itemType,
-                            list[position - (itemCount - list.size)],
-                            position,
-                            holder
-                        )
-                        return
-                    }
+            val list = mDataArray.valueAt(i)
+            itemCount += list.size
+            //如果当前下标在当前过滤的所有list长度以内
+            if (position < itemCount) {
+                val itemType = mDataArray.keyAt(i)
+                mItemTypeArray.get(itemType)?.let {
+                    onConvert(
+                        it,
+                        itemType,
+                        list[position - (itemCount - list.size)],
+                        position,
+                        holder
+                    )
+                    return
                 }
             }
         }

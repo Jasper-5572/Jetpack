@@ -1,15 +1,8 @@
 package com.android.jasper.base
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.NonNull
-import androidx.lifecycle.MutableLiveData
+import androidx.annotation.CallSuper
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.android.jasper.framework.base.JasperFragment
-import kotlin.reflect.KProperty
 
 /**
  *@author   Jasper
@@ -19,22 +12,51 @@ import kotlin.reflect.KProperty
  */
 open class BaseFragment<VM : BaseViewModel> : JasperFragment() {
     /**
+     * 创建ViewModel
+     * @return VM?
+     */
+    protected open fun createViewModel(): VM? = null
+
+    /**
      * viewModel 最好采用lazy{}设置 或者在[JasperFragment.lazyLoad]里面设置
      */
-    var viewModel: VM? = null
-        protected set(value) {
-            value?.let {
-                lifecycle.addObserver(it)
-                it.dataLoading.observe(this@BaseFragment, Observer { showLoading ->
-                    if (showLoading) {
-                        loadingDialog.onShow(this@BaseFragment)
-                    } else {
-                        loadingDialog.dismiss()
-                    }
-                })
-            }
-            field = value
+    val viewModel: VM? by lazy {
+        createViewModel()?.apply {
+            lifecycle.addObserver(this)
+            loadingLiveData.observe(this@BaseFragment, Observer { showLoading ->
+                if (showLoading) {
+                    loadingDialog.onShow(this@BaseFragment)
+                } else {
+                    loadingDialog.dismiss()
+                }
+            })
         }
+    }
+
+    override fun onResume() {
+        if (hasLoadData) {
+            onFragmentShow()
+        }
+        super.onResume()
+    }
+
+    /**
+     * 加载数据以后 再次显示的时候调用
+     */
+    @CallSuper
+    open fun onFragmentShow() {
+    }
+
+    @CallSuper
+    open fun onFragmentDismiss() {
+    }
+
+    override fun onPause() {
+        if (hasLoadData) {
+            onFragmentDismiss()
+        }
+        super.onPause()
+    }
 
     /**
      * 加载对话框

@@ -1,134 +1,81 @@
 package com.android.jasper.framework.expansion
 
-import android.content.res.Resources
-import android.util.TypedValue
+import android.annotation.SuppressLint
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 /**
  *@author   Jasper
- *@create   2020/6/4 13:43
- *@describe
+ *@create   2019-11-06 11:13
+ *@describe 基本数据类型的扩展函数
  *@update
  */
-val Float.dp
-    get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this,
-        Resources.getSystem().displayMetrics
-    )
-val Float.px
-    get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_PX,
-        this,
-        Resources.getSystem().displayMetrics
-    )
-val Float.sp
-    get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_SP,
-        this,
-        Resources.getSystem().displayMetrics
-    )
+@SuppressLint("ConstantLocale")
+object StringNumberFormat {
+    val DECIMAL_FORMAT by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { DecimalFormat() }
+    val SIMPLE_DATE_FORMAT by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
+}
 
-/**
- * String->Int
- * @receiver String
- * @param defaultValue Int
- * @return Int
- */
+
 fun String.parseInt(defaultValue: Int = 0): Int {
-    return if (isEmpty()) {
-        defaultValue
-    } else {
-        try {
-            toInt()
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
+    return try {
+        if (isEmpty()) {
             defaultValue
+        } else {
+            Integer.parseInt(this)
         }
+    } catch (e: NumberFormatException) {
+        e.printStackTrace()
+        defaultValue
     }
 }
-
-/**
- * String->Float
- * @receiver String
- * @param defaultValue Float
- * @return Float
- */
 fun String.parseFloat(defaultValue: Float = 0f): Float {
-    return if (isEmpty()) {
-        defaultValue
-    } else {
-        try {
-            toFloat()
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
+    return try {
+        if (isEmpty()) {
             defaultValue
+        } else {
+           java.lang.Float.parseFloat(this)
         }
+    } catch (e: NumberFormatException) {
+        e.printStackTrace()
+        defaultValue
     }
 }
-
-/**
- * String->Double
- * @receiver String
- * @param defaultValue Double
- * @return Double
- */
 fun String.parseDouble(defaultValue: Double = 0.0): Double {
-    return if (isEmpty()) {
-        defaultValue
-    } else {
-        try {
-            toDouble()
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
+    return try {
+        if (isEmpty()) {
             defaultValue
+        } else {
+            java.lang.Double.parseDouble(this)
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        defaultValue
     }
 }
 
-/**
- * String->Long
- * @receiver String
- * @param defaultValue Long
- * @return Long
- */
 fun String.parseLong(defaultValue: Long = 0L): Long {
-    return if (isEmpty()) {
-        defaultValue
-    } else {
-        try {
-            toLong()
-        } catch (e: NumberFormatException) {
-            e.printStackTrace()
+    return try {
+        if (isEmpty()) {
             defaultValue
+        } else {
+            java.lang.Long.parseLong(this)
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        defaultValue
     }
-
 }
 
-/**
- * String->指定格式的String
- * @receiver String
- * @param pattern String
- * @param defaultValue Double
- * @return String
- */
 fun String.formatString(pattern: String, defaultValue: Double = 0.0): String {
-    return DecimalFormat(pattern).format(this.parseDouble(defaultValue))
+    val decimalFormat = StringNumberFormat.DECIMAL_FORMAT
+    decimalFormat.applyPattern(pattern)
+    return decimalFormat.format(this.parseDouble(defaultValue))
 }
 
-/**
- * String->指定格式Double
- * @receiver String
- * @param pattern String
- * @param defaultValue Double
- * @return Double
- */
 fun String.formatDouble(pattern: String, defaultValue: Double = 0.0): Double {
     return parseDouble(defaultValue).formatDouble(pattern)
 }
@@ -140,7 +87,9 @@ fun String.formatDouble(pattern: String, defaultValue: Double = 0.0): Double {
  * @return String
  */
 fun String.formatTimeString(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
-    return SimpleDateFormat(pattern, Locale.getDefault()).format(parseLong())
+    val format = StringNumberFormat.SIMPLE_DATE_FORMAT
+    format.applyPattern(pattern)
+    return format.format(parseLong())
 }
 
 /**
@@ -153,7 +102,9 @@ fun String.formatTimeString(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 fun String.formatTimeLong(pattern: String = "yyyy-MM-dd HH:mm:ss", defaultValue: Long = 0L): Long {
     return try {
-        SimpleDateFormat(pattern, Locale.getDefault()).parse(this).time
+        val format = StringNumberFormat.SIMPLE_DATE_FORMAT
+        format.applyPattern(pattern)
+        format.parse(this).time
     } catch (e: ParseException) {
         e.printStackTrace()
         defaultValue
@@ -168,10 +119,13 @@ fun String.formatTimeLong(pattern: String = "yyyy-MM-dd HH:mm:ss", defaultValue:
  * @return String
  */
 fun String.formatStringWithCommaSplit(deleteZero: Boolean = false): String {
+
     val value: String = if (deleteZero) formatString("#0.########") else this
+
     if (isEmpty()) {
         return value
     }
+
     val sb = StringBuilder()
     val index = lastIndexOf(".")
     // 取出小数点前面的字符串
@@ -209,7 +163,9 @@ fun String.formatStringWithCommaSplit(deleteZero: Boolean = false): String {
  * @return Double
  */
 fun Double.formatDouble(pattern: String = "#0.00"): Double {
-    return DecimalFormat(pattern).format(this).parseDouble()
+    val decimalFormat = StringNumberFormat.DECIMAL_FORMAT
+    decimalFormat.applyPattern(pattern)
+    return decimalFormat.format(this).parseDouble()
 }
 
 /**
@@ -219,7 +175,9 @@ fun Double.formatDouble(pattern: String = "#0.00"): Double {
  * @return String
  */
 fun Double.formatString(pattern: String = "#0.00"): String {
-    return DecimalFormat(pattern).format(this)
+    val decimalFormat = StringNumberFormat.DECIMAL_FORMAT
+    decimalFormat.applyPattern(pattern)
+    return decimalFormat.format(this)
 }
 
 /**
@@ -229,23 +187,15 @@ fun Double.formatString(pattern: String = "#0.00"): String {
  * @return String
  */
 fun Long.formatTimeString(pattern: String = "yyyy-MM-dd HH:mm:ss"): String {
-    return SimpleDateFormat(pattern, Locale.getDefault()).format(this)
+    val format = StringNumberFormat.SIMPLE_DATE_FORMAT
+    format.applyPattern(pattern)
+    return format.format(this)
 }
 
-/**
- * Double->Int
- * @receiver Double
- * @return Int
- */
 fun Double.parseInt(): Int {
     return this.toInt()
 }
 
-/**
- * Double->Long
- * @receiver Double
- * @return Long
- */
 fun Double.parseLong(): Long {
     return this.toLong()
 }
@@ -253,10 +203,6 @@ fun Double.parseLong(): Long {
 /**
  * 将double类型的字符串每隔3位用逗号拼接起来
  */
-fun Double.formatStringWithCommaSplit(
-    newScale: Int = 8,
-    roundingMode: Int = BigDecimal.ROUND_UP
-): String {
-    return BigDecimal(this.toString()).setScale(newScale, roundingMode).toPlainString()
-        .formatStringWithCommaSplit(true)
+fun Double.formatStringWithCommaSplit(): String {
+    return BigDecimal(this.toString()).setScale(8, BigDecimal.ROUND_UP).toPlainString().formatStringWithCommaSplit(true)
 }

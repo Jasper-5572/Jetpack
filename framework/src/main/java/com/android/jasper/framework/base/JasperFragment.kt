@@ -18,8 +18,8 @@ import java.util.ArrayList
  *@update
  */
 open class JasperFragment : Fragment() {
-    private val headerWrapperList by lazy { mutableListOf<IViewWrapper>() }
-    private val footWrapperList by lazy { mutableListOf<IViewWrapper>() }
+//    private val headerWrapperList by lazy { mutableListOf<IViewWrapper>() }
+//    private val footWrapperList by lazy { mutableListOf<IViewWrapper>() }
 
     /**
      * fragment是否执行过[Fragment.onResume]
@@ -44,34 +44,34 @@ open class JasperFragment : Fragment() {
         lazyLoadDataIfPrepared()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        onCreateRootView(inflater, container, savedInstanceState)?.let { rootView ->
-            val result: LinearLayout
-            if (rootView is LinearLayout && rootView.orientation == LinearLayout.VERTICAL) {
-                result = rootView
-                addHeadWrapperView(result, inflater, container, savedInstanceState)
-                addFootWrapperView(result, inflater, container, savedInstanceState)
-            } else {
-                result = LinearLayout(context)
-                result.layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                result.orientation = LinearLayout.VERTICAL
-                addHeadWrapperView(result, inflater, container, savedInstanceState)
-                result.addView(rootView, result.childCount - 1)
-                addFootWrapperView(result, inflater, container, savedInstanceState)
-            }
-            return result
-        }
-
-        return null
-
-    }
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        onCreateRootView(inflater, container, savedInstanceState)?.let { rootView ->
+//            val result: LinearLayout
+//            if (rootView is LinearLayout && rootView.orientation == LinearLayout.VERTICAL) {
+//                result = rootView
+//                addHeadWrapperView(result, inflater, container, savedInstanceState)
+//                addFootWrapperView(result, inflater, container, savedInstanceState)
+//            } else {
+//                result = LinearLayout(context)
+//                result.layoutParams = LinearLayout.LayoutParams(
+//                    ViewGroup.LayoutParams.MATCH_PARENT,
+//                    ViewGroup.LayoutParams.MATCH_PARENT
+//                )
+//                result.orientation = LinearLayout.VERTICAL
+//                addHeadWrapperView(result, inflater, container, savedInstanceState)
+//                result.addView(rootView, result.childCount - 1)
+//                addFootWrapperView(result, inflater, container, savedInstanceState)
+//            }
+//            return result
+//        }
+//
+//        return null
+//
+//    }
 
     /**
      *
@@ -80,13 +80,13 @@ open class JasperFragment : Fragment() {
      * @param savedInstanceState Bundle?
      * @return View?
      */
-    protected open fun onCreateRootView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return null
-    }
+//    protected open fun onCreateRootView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//        return null
+//    }
 
     /**
      *
@@ -95,19 +95,19 @@ open class JasperFragment : Fragment() {
      * @param container ViewGroup?
      * @param savedInstanceState Bundle?
      */
-    private fun addHeadWrapperView(
-        result: LinearLayout,
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ) {
-        headerWrapperList.forEach { viewWrapper ->
-            viewWrapper.onCreateWrapperView(inflater, container, savedInstanceState)?.let {
-                require(it.parent == null) { "传入头部装饰者的rootView必须没有父控件！" }
-                result.addView(it, 0)
-            }
-        }
-    }
+//    private fun addHeadWrapperView(
+//        result: LinearLayout,
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ) {
+//        headerWrapperList.forEach { viewWrapper ->
+//            viewWrapper.onCreateWrapperView(inflater, container, savedInstanceState)?.let {
+//                require(it.parent == null) { "传入头部装饰者的rootView必须没有父控件！" }
+//                result.addView(it, 0)
+//            }
+//        }
+//    }
 
     /**
      *
@@ -116,19 +116,19 @@ open class JasperFragment : Fragment() {
      * @param container ViewGroup?
      * @param savedInstanceState Bundle?
      */
-    private fun addFootWrapperView(
-        result: LinearLayout,
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ) {
-        footWrapperList.forEach { viewWrapper ->
-            viewWrapper.onCreateWrapperView(inflater, container, savedInstanceState)?.let {
-                require(it.parent == null) { "传入尾部装饰者的rootView必须没有父控件！" }
-                result.addView(it, result.childCount - 1)
-            }
-        }
-    }
+//    private fun addFootWrapperView(
+//        result: LinearLayout,
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ) {
+//        footWrapperList.forEach { viewWrapper ->
+//            viewWrapper.onCreateWrapperView(inflater, container, savedInstanceState)?.let {
+//                require(it.parent == null) { "传入尾部装饰者的rootView必须没有父控件！" }
+//                result.addView(it, result.childCount - 1)
+//            }
+//        }
+//    }
 
     override fun onResume() {
         super.onResume()

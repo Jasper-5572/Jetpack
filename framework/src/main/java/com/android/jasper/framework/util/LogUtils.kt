@@ -1,7 +1,6 @@
 package com.android.jasper.framework.util
 
 import android.util.Log
-import com.android.jasper.framework.JasperConfigurationManager
 import com.android.jasper.framework.JasperFramework
 
 /**
@@ -12,9 +11,7 @@ import com.android.jasper.framework.JasperFramework
  */
 object LogUtils {
     private val debug by lazy {
-        "true".equals(
-            JasperConfigurationManager.INSTANCE.getValue("logDebug").trim { it <= ' ' }, ignoreCase = true
-        )
+       JasperFramework.appDebug
     }
 
     @JvmStatic

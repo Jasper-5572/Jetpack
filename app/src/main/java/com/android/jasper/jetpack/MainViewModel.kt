@@ -9,7 +9,9 @@ import com.android.jasper.base.BaseViewModel
  *@describe
  *@update
  */
-class MainViewModel : BaseViewModel() {
+class MainViewModel() : BaseViewModel() {
+
+    val showTabLayout by lazy { MutableLiveData<Boolean>() }
 
     val showDrawLayout by lazy { MutableLiveData<Boolean>() }
 }

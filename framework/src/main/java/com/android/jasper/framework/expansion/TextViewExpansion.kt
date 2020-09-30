@@ -12,9 +12,10 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.StringRes
 
+
 /**
  *@author   Jasper
- *@create   2020/6/19 11:12
+ *@create   2019-11-07 18:54
  *@describe
  *@update
  */
@@ -61,7 +62,7 @@ fun EditText.stopCopyPaste(){
  * 获取焦点并弹出键盘
  * @receiver EditText
  */
-fun EditText.setFocusShowSoftInput(){
+fun EditText.getFocusShowSoftInput(){
     isFocusable = true
     isFocusableInTouchMode = true
     requestFocus()
@@ -90,21 +91,21 @@ fun TextView.setString(value: String? = "") {
 /**
  *
  * @receiver TextView
- * @param stringRes Int
+ * @param value String?
  */
-fun TextView.setString(@StringRes stringRes: Int) {
-    this.setText(stringRes)
+@Suppress("DEPRECATION")
+fun TextView.setHtml(value: String? = "") {
+    this.text = value?.let {
+        Html.fromHtml(it)
+    } ?: Editable.Factory.getInstance().newEditable("")
 }
 /**
  *
  * @receiver TextView
- * @param value String?
+ * @param stringRes Int
  */
-fun TextView.setHtml(value: String? = "") {
-    this.text = value?.let {
-        @Suppress("DEPRECATION")
-        Html.fromHtml(it)
-    } ?: Editable.Factory.getInstance().newEditable("")
+fun TextView.setString(@StringRes stringRes: Int) {
+    this.setText(stringRes)
 }
 
 /**
@@ -112,16 +113,19 @@ fun TextView.setHtml(value: String? = "") {
  * @receiver TextView
  * @return Boolean
  */
-fun TextView.textIsEmpty(): Boolean = (this.text?.toString())?.isEmpty() ?: true
+val TextView.isTextEmpty get() = this.getString().isEmpty()
 
 /**
  * 判断TextView的字符串是否非空
  * @receiver TextView
  * @return Boolean
  */
-fun TextView.textIsNotEmpty(): Boolean = (this.text?.toString())?.isNotEmpty() ?: false
+val TextView.isTextNotEmpty get() = this.getString().isNotEmpty()
 
 /**
  * 获取TextView的text
  */
 fun TextView.getString(): String = this.text?.toString() ?: ""
+
+
+

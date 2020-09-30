@@ -5,18 +5,22 @@ import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.android.jasper.framework.util.LogUtils
 import com.android.jasper.base.BaseActivity
-import com.android.jasper.base.BaseViewPager2FragmentAdapter
-import com.android.jasper.jetpack.lifecycle.TestLifecycle
+import com.android.jasper.framework.live_data.EventMessage
+import com.android.jasper.framework.live_data.LiveDataBus
 import com.android.jasper.jetpack.page.TestFragment
 import com.android.jasper.jetpack.page.home.HomeFragment
 import com.android.jasper.jetpack.page.personal.PersonalFragment
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+
 
 /**
  *@author   Jasper
@@ -24,15 +28,35 @@ import kotlinx.coroutines.*
  *@describe
  *@update
  */
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity<MainViewModel>() {
 
+    private val tabTitleArray by lazy {
+        arrayListOf<String>().apply {
+            add("首页")
+            add("测试1")
+            add("测试2")
+            add("测试3")
+            add("个人")
+        }
+    }
     private val fragmentAdapter by lazy {
-        BaseViewPager2FragmentAdapter<Fragment>(
-            this@MainActivity
-        )
+        object : FragmentStateAdapter(this@MainActivity) {
+            override fun getItemCount(): Int = tabTitleArray.size
+            override fun createFragment(position: Int): Fragment {
+                return when (position) {
+                    0 -> HomeFragment.newFragment()
+                    4 -> PersonalFragment.newFragment()
+                    else -> TestFragment.newFragment("测试$position")
+                }
+            }
+        }
     }
 
-    private val viewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+
+    override fun createViewModel(): MainViewModel? {
+        return ViewModelProvider(this).get(MainViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,22 +68,23 @@ class MainActivity : BaseActivity() {
      * 初始化数据
      */
     private fun initData() {
-        fragmentAdapter.apply {
-            addFragment(HomeFragment.newFragment(), "首页")
-            addFragment(TestFragment.newFragment("测试"), "测试")
-            addFragment(TestFragment.newFragment("测试2"), "测试2")
-            addFragment(TestFragment.newFragment("测试3"), "测试3")
-            addFragment(PersonalFragment.newFragment(), "个人")
-        }
         view_pager2?.apply {
+//            (getChildAt(0) as? RecyclerView)?.let {
+//                //自定义缓存Item的个数
+//                it.setItemViewCacheSize(tabTitleArray.size)
+//                //关闭预加载
+//                it.layoutManager?.isItemPrefetchEnabled = false
+//            }
+            isUserInputEnabled = false
             adapter = fragmentAdapter
             tab_layout?.let {
                 TabLayoutMediator(it, this, true,
                     TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-                        tab.text = fragmentAdapter.getPageTitle(position)
+                        tab.text = tabTitleArray[position]
+//                        tab.setIcon(R.mipmap.base_ic_logo_icon)
                     }).attach()
+
             }
-            this.offscreenPageLimit=fragmentAdapter.itemCount-1
         }
         drawer_layout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
@@ -68,140 +93,89 @@ class MainActivity : BaseActivity() {
      * 设置监听
      */
     private fun setListener() {
-        viewModel.showDrawLayout.observe(this, Observer {
+        viewModel?.showDrawLayout?.observe(this, Observer {
             if (it) {
                 drawer_layout?.openDrawer(GravityCompat.START)
             } else if (drawer_layout?.isOpen == true) {
                 drawer_layout?.close()
             }
-
         })
+        viewModel?.showTabLayout?.observe(this, Observer {
+            if (it) {
+                tab_layout?.visibility = View.VISIBLE
+            } else {
+                tab_layout?.visibility = View.GONE
+            }
+        })
+        tab_layout?.apply {
+            clearOnTabSelectedListeners()
+            addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    tab?.let {
+                        view_pager2?.setCurrentItem(it.position, false)
+                    }
+                }
+
+            })
+        }
+//        fragmentAdapter.registerFragmentTransactionCallback(object :
+//            FragmentStateAdapter.FragmentTransactionCallback() {
+//            override fun onFragmentMaxLifecyclePreUpdated(
+//                fragment: Fragment,
+//                maxLifecycleState: Lifecycle.State
+//            ): OnPostEventListener {
+//                return OnPostEventListener {
+//                    LogUtils.i("fragmentAdapter->onFragmentMaxLifecyclePreUpdated($fragment,$maxLifecycleState)")
+//                }
+//            }
+//        })
         drawer_layout?.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View) {
                 super.onDrawerClosed(drawerView)
-                viewModel.showDrawLayout.value = false
+                viewModel?.showDrawLayout?.value = false
             }
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        LogUtils.i(this.javaClass, "MainActivity:onStart()")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        LogUtils.i(this.javaClass, "MainActivity:onRestart()")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        LogUtils.i(this.javaClass, "MainActivity:onResume()")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        LogUtils.i(this.javaClass, "MainActivity:onPause()")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        LogUtils.i(this.javaClass, "MainActivity:onStop()")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        LogUtils.i(this.javaClass, "MainActivity:onDestroy()")
-    }
-
-
-    private suspend fun getToken(initToken: Int): Int {
-        delay(500L)
-        return initToken + 3
-    }
-
-    private fun testCoroutines() {
-
-        Thread {
-            LogUtils.i(
-                this@MainActivity.javaClass,
-                "testCoroutines ，当前线程1:${Thread.currentThread().name}"
-            )
-            MainScope().launch {
-                LogUtils.i(
-                    this@MainActivity.javaClass,
-                    "testCoroutines ，当前线程2MainScope:${Thread.currentThread().name}"
-                )
+//        LiveDataBus.INSTANCE.sendMessage(EventMessage("drawer_layout",true),true)
+        LiveDataBus.INSTANCE.observeMessage<Boolean>(this, "drawer_layout", true) {
+            if (it.value) {
+                drawer_layout?.openDrawer(GravityCompat.START)
             }
+            it.callback.invoke(null)
+        }
+    }
 
-            GlobalScope.launch {
-                LogUtils.i(
-                    this@MainActivity.javaClass,
-                    "testCoroutines ，当前线程3:${Thread.currentThread().name}"
-                )
-            }
-
-            GlobalScope.launch(context = Dispatchers.IO) {
-                LogUtils.i(
-                    this@MainActivity.javaClass,
-                    "testCoroutines ，当前线程 Dispatchers.IO:${Thread.currentThread().name}"
-                )
-            }
-            GlobalScope.launch(context = Dispatchers.Main) {
-                LogUtils.i(
-                    this@MainActivity.javaClass,
-                    "testCoroutines ，当前线程Dispatchers.Main:${Thread.currentThread().name}"
-                )
-            }
-            GlobalScope.launch(context = Dispatchers.Default) {
-                LogUtils.i(
-                    this@MainActivity.javaClass,
-                    "testCoroutines ，当前线程 Dispatchers.Default:${Thread.currentThread().name}"
-                )
-            }
-            GlobalScope.launch(context = Dispatchers.Unconfined) {
-                LogUtils.i(
-                    this@MainActivity.javaClass,
-                    "testCoroutines ，当前线程Dispatchers.Unconfined:${Thread.currentThread().name}"
-                )
-            }
-        }.start()
-
+//    override fun onStart() {
+//        super.onStart()
+//        LogUtils.i(this.javaClass, "MainActivity:onStart()")
+//    }
 //
-//        var token = 1
-//        LogUtils.i(
-//            this@MainActivity.javaClass,
-//            "testCoroutines ，token:$token ,时间:${System.currentTimeMillis()}"
-//        )
-//        GlobalScope.launch {
-//            token = getToken(token)
-//            LogUtils.i(
-//                this@MainActivity.javaClass,
-//                "testCoroutines ，token1:$token ,时间:${System.currentTimeMillis()}"
-//            )
-//            delay(1000)
-//            token = getToken(token)
-//            LogUtils.i(
-//                this@MainActivity.javaClass,
-//                "testCoroutines ，token1:$token ,时间:${System.currentTimeMillis()}"
-//            )
-//        }
-//        LogUtils.i(
-//            this@MainActivity.javaClass,
-//            "testCoroutines ，token:$token ,时间:${System.currentTimeMillis()}"
-//        )
-//        GlobalScope.launch {
-//            token = getToken(token)
-//            LogUtils.i(
-//                this@MainActivity.javaClass,
-//                "testCoroutines ，token2:$token ,时间:${System.currentTimeMillis()}"
-//            )
-//            delay(1000)
-//            token = getToken(token)
-//            LogUtils.i(
-//                this@MainActivity.javaClass,
-//                "testCoroutines ，token2:$token ,时间:${System.currentTimeMillis()}"
-//            )
-//        }
-    }
+//    override fun onRestart() {
+//        super.onRestart()
+//        LogUtils.i(this.javaClass, "MainActivity:onRestart()")
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        LogUtils.i(this.javaClass, "MainActivity:onResume()")
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        LogUtils.i(this.javaClass, "MainActivity:onPause()")
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//        LogUtils.i(this.javaClass, "MainActivity:onStop()")
+//    }
+//
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        LogUtils.i(this.javaClass, "MainActivity:onDestroy()")
+//    }
+
+
 }

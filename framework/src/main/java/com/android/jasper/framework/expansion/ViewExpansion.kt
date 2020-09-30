@@ -5,7 +5,7 @@ package com.android.jasper.framework.expansion
 import android.view.View
 
 /**
- *@author   Mr.Hu(Jc) OrgVTrade
+ *@author   Jasper
  *@create   2019-11-07 18:54
  *@describe
  *@update

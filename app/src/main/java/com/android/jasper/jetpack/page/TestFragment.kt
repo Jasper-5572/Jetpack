@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.alibaba.android.arouter.launcher.ARouter
+import com.android.jasper.base.ARounterPath
 import com.android.jasper.framework.expansion.setOnClick
 import com.android.jasper.framework.expansion.setString
 import com.android.jasper.jetpack.R
@@ -58,7 +60,9 @@ class TestFragment : BaseFragment<BaseViewModel>() {
      */
     private fun setListener() {
         text_view?.setOnClick {
-            it.setString("点击切换$mTitle")
+            ARouter.getInstance().build("/app/webView")
+                .navigation(context)
+//            it.setString("点击切换$mTitle")
         }
     }
 }

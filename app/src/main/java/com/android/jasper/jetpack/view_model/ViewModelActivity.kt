@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.android.jasper.base.BaseActivity
+import com.android.jasper.base.BaseViewModel
 
 /**
  *@author   Jasper
@@ -11,7 +12,7 @@ import com.android.jasper.base.BaseActivity
  *@describe
  *@update
  */
-class ViewModelActivity : BaseActivity() {
+class ViewModelActivity : BaseActivity<BaseViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ViewModelProvider(this)

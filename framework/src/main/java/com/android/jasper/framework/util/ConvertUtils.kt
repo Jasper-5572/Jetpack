@@ -1,6 +1,5 @@
 package com.android.jasper.framework.util
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -15,51 +14,6 @@ import java.io.ByteArrayOutputStream
  *@update
  */
 object ConvertUtils {
-
-    /**
-     * sp->px
-     * @param spValue Float
-     * @return Int
-     */
-    @JvmStatic
-    fun sp2px(spValue: Float): Int {
-        return (spValue * Resources.getSystem().displayMetrics.scaledDensity + 0.5f).toInt()
-    }
-
-
-    /**
-     * dp->px
-     * @param dpValue Float
-     * @return Int
-     */
-    @JvmStatic
-    fun dp2px(dpValue: Float): Int {
-        return (dpValue * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
-    }
-
-
-    /**
-     * px->dp
-     * @param pxValue Float
-     * @return Int
-     */
-    @JvmStatic
-    fun px2dp(pxValue: Float): Int {
-        return (pxValue / Resources.getSystem().displayMetrics.density + 0.5f).toInt()
-    }
-
-
-    /**
-     *  px->sp
-     * @param pxValue Float
-     * @return Int
-     */
-    @JvmStatic
-    fun px2sp(pxValue: Float): Int {
-        return (pxValue / Resources.getSystem().displayMetrics.scaledDensity + 0.5f).toInt()
-    }
-
-
     /**
      * bitmap->bytes
      * @param bitmap Bitmap

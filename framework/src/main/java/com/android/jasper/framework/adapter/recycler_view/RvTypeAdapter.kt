@@ -41,7 +41,7 @@ open class RvTypeAdapter : RecyclerView.Adapter<RvViewHolder>() {
         ktAdapterTool.onConvert(holder, position)
     }
 
-    override fun getItemViewType(position: Int): Int = ktAdapterTool.getItemViewType(position)
+    override fun getItemViewType(position: Int): Int =ktAdapterTool.getItemViewType(position)
 
     /**
      * 注册ItemType
@@ -63,30 +63,22 @@ open class RvTypeAdapter : RecyclerView.Adapter<RvViewHolder>() {
      * @param typeList List<D>
      * @return RvTypeAdapter
      */
-    fun <D> setList(itemType: Int, typeList: List<D>?) =
+    fun <D> setList(itemType: Int, typeList: List<D>?): RvTypeAdapter {
         ktAdapterTool.mDataArray.put(itemType, typeList)
+        return this
+    }
 
 
-    fun getList(itemType: Int): List<*>? = ktAdapterTool.mDataArray.get(itemType)
+    fun getList(itemType: Int): List<*>? =ktAdapterTool.mDataArray.get(itemType)
 
     /**
      * 获取完整的数据集合
      * @return SparseArrayCompat<List<*>>
      */
-    protected fun getDataArray(): SparseArrayCompat<List<*>?> {
-        return ktAdapterTool.mDataArray
-    }
+    protected fun getDataArray(): SparseArrayCompat<List<*>> =ktAdapterTool.mDataArray
 
-    /**
-     * 移除对应的itemType数据集合 item监听
-     * @param itemType Int
-     */
-    protected fun removeItemType(itemType: Int) {
-        ktAdapterTool.mDataArray.remove(itemType)
-        ktAdapterTool.mItemTypeArray.remove(itemType)
-        ktAdapterTool.mItemLongClickListeners.remove(itemType)
-        ktAdapterTool.mItemClickListeners.remove(itemType)
-    }
+
+
 
 
     /**

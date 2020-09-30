@@ -1,9 +1,12 @@
 package com.android.jasper.base
 
+import android.os.Handler
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import com.android.jasper.framework.util.LogUtils
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  *@author   Jasper
@@ -12,7 +15,15 @@ import com.android.jasper.framework.util.LogUtils
  *@update
  */
 open class BaseViewModel : ViewModel(), DefaultLifecycleObserver {
-    val dataLoading = MutableLiveData<Boolean>()
+
+    val loadingLiveData by lazy { MutableLiveData<Boolean>() }
+
+    val toastStringLiveData by lazy { MutableLiveData<String>() }
+
+    val toastStringResLiveData by lazy { MutableLiveData<Int>() }
+
+    val toastThrowableLiveData by lazy { MutableLiveData<Throwable>() }
+
     /**
      * fragment是否执行过[Fragment.onResume]
      */
@@ -58,4 +69,34 @@ open class BaseViewModel : ViewModel(), DefaultLifecycleObserver {
     open fun lazyLoad() {
     }
 
+}
+
+fun ViewModel.launch(
+    onError: (e: Throwable) -> Unit = {},
+    onFinally: () -> Unit = {},
+    block: suspend CoroutineScope.() -> Unit
+) {
+    viewModelScope.launch(
+        CoroutineExceptionHandler { _, throwable ->
+            run {
+                onError(throwable)
+            }
+        }) {
+        try {
+            block.invoke(this)
+        } finally {
+            onFinally()
+        }
+    }
+}
+
+inline fun <reified Rep,reified V:ViewModel> ViewModelStoreOwner.getViewModel(repository: Rep): V {
+    return ViewModelProvider(this, object : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return modelClass.getConstructor(Rep::class.java).newInstance(repository)
+        }
+    }).get(V::class.java)
+}
+inline fun <reified V:ViewModel> ViewModelStoreOwner.getViewModel(): V {
+    return ViewModelProvider(this).get(V::class.java)
 }

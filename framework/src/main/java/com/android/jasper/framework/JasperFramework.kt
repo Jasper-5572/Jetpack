@@ -4,10 +4,16 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import android.content.res.Resources
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
 import android.os.Process
-import com.android.jasper.framework.util.AppUtils
+import com.android.jasper.framework.base.Launcher
+import com.android.jasper.framework.base.launcher
+import com.android.jasper.framework.base.safeLaunch
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 /**
  *@author   Jasper
@@ -15,7 +21,15 @@ import com.android.jasper.framework.util.AppUtils
  *@describe JasperFramework框架入口
  *@update
  */
-class JasperFramework private constructor() {
+class JasperFramework private constructor() : CoroutineScope {
+    private val job: Job by lazy { Job() }
+    override val coroutineContext: CoroutineContext get() = Dispatchers.Main + job
+    private val appDebug by lazy {
+        application.applicationContext?.applicationInfo?.let {
+            return@let it.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+        } ?: false
+    }
+
     /**
      * activity集合
      */
@@ -24,21 +38,9 @@ class JasperFramework private constructor() {
     }
 
     /**
-     * app状态监听
-     */
-    private val appStateListenerList by lazy {
-        mutableListOf<AppStateListener>()
-    }
-
-    /**
-     * 正在start状态的activity的数量，用于判断前后台切换的状态
-     */
-    private var activityStartCount: Int = 0
-
-    /**
      * application
      */
-    var application: Application? = null
+    var application: Application by NotNullSingleValueVar()
         private set
 
     /**
@@ -49,19 +51,35 @@ class JasperFramework private constructor() {
 
     companion object {
         val INSTANCE by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) { JasperFramework() }
+
+        /**
+         * app是否是debug
+         */
+        val appDebug by lazy { INSTANCE.appDebug }
+
+        /**
+         *
+         * @param block [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, Unit>
+         * @return Launcher
+         */
+        fun launcher(block: suspend CoroutineScope.() -> Unit): Launcher =
+            INSTANCE.launcher { block.invoke(this) }
+
+        /**
+         *
+         * @param block [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, Unit>
+         * @return Job
+         */
+        fun safeLaunch(block: suspend CoroutineScope.() -> Unit): Job =
+            INSTANCE.safeLaunch { block.invoke(this) }
     }
 
+    /**
+     * 初始化
+     * @param application Application
+     * @param jasperConfiguration JasperConfiguration?
+     */
     fun initialize(application: Application, jasperConfiguration: JasperConfiguration? = null) {
-        //检测是否是主进程
-        if (!AppUtils.checkMainProcess(application)) {
-            return
-        }
-        //检测是否已经初始化过
-        require(this.application == null) {
-            "${JasperFramework::class.java.simpleName}has initialize"
-        }
-
-
         this.application = application
         //解析xml配置并更新动态配置
         JasperConfigurationManager.INSTANCE.initialize(application, jasperConfiguration)
@@ -70,16 +88,7 @@ class JasperFramework private constructor() {
             Application.ActivityLifecycleCallbacks {
             override fun onActivityPaused(activity: Activity) {}
 
-            override fun onActivityStarted(activity: Activity) {
-                activityStartCount++
-                //数值从0变到1说明是从后台切到前台
-                if (activityStartCount == 1) {
-                    //从后台切到前台
-                    appStateListenerList.forEach {
-                        it.onFront(activity)
-                    }
-                }
-            }
+            override fun onActivityStarted(activity: Activity) {}
 
             override fun onActivityDestroyed(activity: Activity) {
                 //从列表移除
@@ -88,17 +97,7 @@ class JasperFramework private constructor() {
 
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 
-            override fun onActivityStopped(activity: Activity) {
-                activityStartCount--
-                //数值从1到0说明是从前台切到后台
-                if (activityStartCount == 0) {
-                    //从前台切到后台
-                    appStateListenerList.forEach {
-                        it.onBack(activity)
-                    }
-
-                }
-            }
+            override fun onActivityStopped(activity: Activity) {}
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 //添加到列表
@@ -121,7 +120,7 @@ class JasperFramework private constructor() {
     fun exitApp(killProcess: Boolean = true) {
         //注意：不能先杀掉主进程，否则逻辑代码无法继续执行，需先杀掉相关进程最后杀掉主进程
         if (killProcess) {
-            (application?.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager)?.let {
+            (application.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager)?.let {
                 it.runningAppProcesses?.forEach { runAppProcessInfo ->
                     if (runAppProcessInfo.pid != Process.myPid()) {
                         Process.killProcess(runAppProcessInfo.pid)
@@ -129,50 +128,28 @@ class JasperFramework private constructor() {
                 }
             }
         }
+        job.cancel()
         showActivity = null
-        activities.filterNot {
-            it.isFinishing
-        }.forEach { it.finish() }
+        activities.filterNot { it.isFinishing }.forEach { it.finish() }
         activities.clear()
-
-
-        application?.onTerminate()
+        application.onTerminate()
         Process.killProcess(Process.myPid())
-
-
-    }
-
-
-    /**
-     * 添加app状态监听（前台 后台）
-     * @param appStateListener AppStateListener
-     */
-    fun registerAppStateListener(appStateListener: AppStateListener) {
-        appStateListenerList.add(appStateListener)
-    }
-
-    /**
-     * 添加app状态监听（前台 后台）
-     * @param appStateListener AppStateListener
-     */
-    fun unRegisterAppStateListener(appStateListener: AppStateListener) {
-        appStateListenerList.remove(appStateListener)
     }
 }
 
+//定义一个属性管理类，进行非空和重复赋值的判断
+private class NotNullSingleValueVar<T> : ReadWriteProperty<Any?, T> {
+    private var value: T? = null
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return value
+            ?: throw IllegalStateException("${JasperFramework::class.java.simpleName}not initialized")
+    }
 
-interface AppStateListener {
-    /**
-     * 从后台切换到前台
-     * activity 当前显示的activity
-     */
-    fun onFront(activity: Activity)
-
-    /**
-     * 从前台切换到后台
-     * activity 最后一个显示的activity
-     */
-    fun onBack(activity: Activity)
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        this.value = if (this.value == null) value
+        else throw IllegalStateException("${JasperFramework::class.java.simpleName}has initialize")
+    }
 }
+
 
 

@@ -1,8 +1,10 @@
 package com.android.jasper.jetpack.lifecycle
 
 import android.os.Bundle
+import androidx.lifecycle.ViewModel
 import com.android.jasper.framework.util.LogUtils
 import com.android.jasper.base.BaseActivity
+import com.android.jasper.base.BaseViewModel
 
 /**
  *@author   Jasper
@@ -10,7 +12,7 @@ import com.android.jasper.base.BaseActivity
  *@describe
  *@update
  */
-class LifecycleActivity : BaseActivity() {
+class LifecycleActivity : BaseActivity<BaseViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         LogUtils.i(this.javaClass,"LifecycleActivity:onCreate()")
         super.onCreate(savedInstanceState)

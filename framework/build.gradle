@@ -33,8 +33,7 @@ dependencies {
     //
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
-    api 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
+//    api 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
     api "androidx.appcompat:appcompat:$versions.appcompat"
     api "androidx.recyclerview:recyclerview:${versions.recyclerview}"
     api "com.google.android.material:material:$versions.material"
@@ -57,8 +56,8 @@ dependencies {
     //======================================================retrofit========================================================
     api "com.squareup.retrofit2:retrofit:$versions.retrofit"
     api "com.squareup.retrofit2:converter-gson:$versions.retrofit"
-    api "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
-    api "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+//    api "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+//    api "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
 
 
 //======================================================lifecycle========================================================

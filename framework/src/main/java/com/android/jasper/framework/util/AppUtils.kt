@@ -8,10 +8,14 @@ import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
+import android.os.Process
 import android.view.View
 import androidx.core.content.FileProvider
-import com.android.jasper.framework.JasperFramework
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileReader
+import java.nio.charset.Charset
 
 /**
  *@author   Jasper
@@ -27,20 +31,34 @@ object AppUtils {
      */
     @JvmStatic
     fun checkMainProcess(context: Context): Boolean {
-        val systemService = context.getSystemService(Context.ACTIVITY_SERVICE)
-        if (systemService is ActivityManager) {
-            val appProcessInfoList = systemService.runningAppProcesses
-            val packageName = context.packageName
-            val it = appProcessInfoList.iterator()
-            var processInfo: ActivityManager.RunningAppProcessInfo
-            do {
-                if (!it.hasNext()) {
-                    return false
-                }
-                processInfo = it.next()
-            } while (processInfo.pid != android.os.Process.myPid() || packageName != processInfo.processName)
+        return getApplicationId(context).equals(getCurrentProcessName(),true)
+    }
+
+    @JvmStatic
+    fun getApplicationId(context: Context): String {
+        return context.packageName
+    }
+
+    /**
+     * 获取当前线程名
+     * @return String
+     */
+    @JvmStatic
+    fun getCurrentProcessName(): String {
+        FileInputStream("/proc/self/cmdline").use { fileInputStream ->
+            val buffer = ByteArray(256)
+            var len = 0
+            var b: Int
+            while (fileInputStream.read().also { b = it } > 0 && len < buffer.size) {
+                buffer[len++] = b.toByte()
+            }
+            if (len > 0) {
+                return String(buffer, 0, len, Charset.forName("UTF-8"))
+            }
         }
-        return true
+
+        return ""
+
     }
 
     /**
@@ -137,58 +155,23 @@ object AppUtils {
     }
 
     /**
-     * 安装apk [apkPath] apk路径
-     *
+     * 安装apk
+     * @param context Context
+     * @param apkPath String apk路径
      */
     @JvmStatic
-    fun installApk(context: Context?, apkPath: String) {
-        if (apkPath.isNotEmpty()) {
-            Intent(Intent.ACTION_VIEW).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                context?.let {
-                    setDataAndType(
-                        getInstallUri(it, apkPath),
-                        "application/vnd.android.package-archive"
-                    )
-                    it.startActivity(this)
-                } ?: let {
-                    JasperFramework.INSTANCE.showActivity?.let {
-                        setDataAndType(
-                            getInstallUri(it, apkPath),
-                            "application/vnd.android.package-archive"
-                        )
-                        it.startActivity(this)
-                    }
-                }
-
-            }
+    fun installApk(context: Context, apkPath: String) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-    }
-
-    /**
-     *
-     */
-    private fun getInstallUri(context: Context, filePath: String): Uri? {
-        if (filePath.isEmpty()) {
-            return null
+        val file = File(apkPath)
+        val apkUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            FileProvider.getUriForFile(context, context.packageName + ".frameworkFileProvider", file)
+        } else {
+            Uri.fromFile(file)
         }
-        File(filePath).let {
-            return if (it.exists()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    FileProvider.getUriForFile(
-                        context,
-                        context.packageName + ".frameworkFileProvider",
-                        it
-                    )
-                } else {
-                    Uri.fromFile(it)
-                }
-            } else {
-                null
-            }
-        }
-
-
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
+        context.startActivity(intent)
     }
 }

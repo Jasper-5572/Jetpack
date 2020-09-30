@@ -11,14 +11,19 @@ import androidx.recyclerview.widget.RecyclerView
  *@update
  */
 open class NormalRvAdapter<D> constructor(
-    //正在加载数据布局
-    @LayoutRes val loadingLayoutRes: Int = View.NO_ID,
-    //没有数据显示的布局
-    @LayoutRes val emptyLayoutRes: Int = View.NO_ID,
-    //加载数据失败的布局
-    @LayoutRes val errorLayoutRes: Int = View.NO_ID
+        //正在加载数据布局
+        @LayoutRes val loadingLayoutRes: Int = View.NO_ID,
+        //没有数据显示的布局
+        @LayoutRes val emptyLayoutRes: Int = View.NO_ID,
+        //加载数据失败的布局
+        @LayoutRes val errorLayoutRes: Int = View.NO_ID
 ) : RvTypeAdapter() {
-
+    /**
+     * 获取数据长度 不包含异常的数据
+     */
+    val dataSize: Int get() = mList?.size ?: 0
+    open var mList: MutableList<D>? = null
+        protected set
 
     companion object {
         /**
@@ -42,7 +47,6 @@ open class NormalRvAdapter<D> constructor(
         const val DATA_ITEM_TYPE: Int = 1
     }
 
-    private var mList: MutableList<D>? = null
 
     init {
         showLoading()
@@ -54,13 +58,14 @@ open class NormalRvAdapter<D> constructor(
      * @param list 数据list
      * @return 当前对象
      */
-    open fun setList(list: MutableList<D>?) {
+    open fun setList(list: MutableList<D>?): NormalRvAdapter<D> {
         clearOtherItemType()
         mList = list
-        setList(DATA_ITEM_TYPE, list)
-        if (checkNoData()) {
+        super.setList(DATA_ITEM_TYPE, list)
+        if (dataSize == 0) {
             showEmpty()
         }
+        return this
     }
 
     /**
@@ -70,12 +75,9 @@ open class NormalRvAdapter<D> constructor(
         clearOtherItemType()
         if (loadingLayoutRes != View.NO_ID) {
             registerItemType(LOADING_ITEM_TYPE, object : RvTypeView<String>() {
-                override fun onConvertData(holder: RvViewHolder, data: String, position: Int) {
-                }
+                override fun onConvertData(holder: RvViewHolder, data: String, position: Int) {}
 
-                override fun getLayoutId(): Int {
-                    return loadingLayoutRes
-                }
+                override fun getLayoutId(): Int = loadingLayoutRes
             })
             getDataArray().clear()
             getDataArray().put(LOADING_ITEM_TYPE, listOf("加载中...."))
@@ -87,17 +89,14 @@ open class NormalRvAdapter<D> constructor(
      * 显示正在加载
      */
     open fun showError(whenNoData: Boolean = true) {
-        val show = if (whenNoData) checkNoData() else true
+        val show = if (whenNoData) dataSize == 0 else true
         if (show) {
             clearOtherItemType()
             if (loadingLayoutRes != View.NO_ID) {
                 registerItemType(ERROR_ITEM_TYPE, object : RvTypeView<String>() {
-                    override fun onConvertData(holder: RvViewHolder, data: String, position: Int) =
-                        onBindError(holder)
+                    override fun onConvertData(holder: RvViewHolder, data: String, position: Int) = onBindError(holder)
+                    override fun getLayoutId(): Int = errorLayoutRes
 
-                    override fun getLayoutId(): Int {
-                        return errorLayoutRes
-                    }
                 })
                 getDataArray().clear()
                 getDataArray().put(ERROR_ITEM_TYPE, listOf("加载失败"))
@@ -116,12 +115,9 @@ open class NormalRvAdapter<D> constructor(
         clearOtherItemType()
         if (emptyLayoutRes != View.NO_ID) {
             registerItemType(EMPTY_ITEM_TYPE, object : RvTypeView<String>() {
-                override fun onConvertData(holder: RvViewHolder, data: String, position: Int) {
-                }
+                override fun onConvertData(holder: RvViewHolder, data: String, position: Int) {}
 
-                override fun getLayoutId(): Int {
-                    return emptyLayoutRes
-                }
+                override fun getLayoutId(): Int = emptyLayoutRes
             })
             getDataArray().clear()
             getDataArray().put(EMPTY_ITEM_TYPE, listOf("暂无数据"))
@@ -139,30 +135,15 @@ open class NormalRvAdapter<D> constructor(
         registerItemType(DATA_ITEM_TYPE, itemTypeView, true)
     }
 
-    /**
-     * 获取数据列表
-     */
-    open fun getList(): MutableList<D>? = mList
-
-    /**
-     * 检测是否有数据
-     * @return Boolean
-     */
-    fun checkNoData(): Boolean = getDataSize() == 0
-
-    /**
-     * 获取数据的长度
-     * @return Int
-     */
-    fun getDataSize(): Int = mList?.size ?: 0
 
     /**
      * 原数据末尾追加数据
      * @param list MutableList<D>
      * @return NormalRvAdapter<D>
      */
-    open fun addList(list: MutableList<D>) {
+    open fun addList(list: MutableList<D>): NormalRvAdapter<D> {
         mList?.addAll(list) ?: setList(list)
+        return this
     }
 
     /**
@@ -186,7 +167,7 @@ open class NormalRvAdapter<D> constructor(
             setOnItemClickListener(ERROR_ITEM_TYPE, object :
                 RvItemListener.OnItemClickListener<D> {
                 override fun onItemClick(
-                    view: View, holder: RecyclerView.ViewHolder, data: D, position: Int
+                        view: View, holder: RecyclerView.ViewHolder, data: D, position: Int
                 ) {
                     showLoading()
                     listener.invoke()
@@ -204,7 +185,7 @@ open class NormalRvAdapter<D> constructor(
         setOnItemClickListener(EMPTY_ITEM_TYPE, object :
             RvItemListener.OnItemClickListener<D> {
             override fun onItemClick(
-                view: View, holder: RecyclerView.ViewHolder, data: D, position: Int
+                    view: View, holder: RecyclerView.ViewHolder, data: D, position: Int
             ) {
                 listener.invoke()
             }
@@ -220,7 +201,7 @@ open class NormalRvAdapter<D> constructor(
         setOnItemClickListener(DATA_ITEM_TYPE, object :
             RvItemListener.OnItemClickListener<D> {
             override fun onItemClick(
-                view: View, holder: RecyclerView.ViewHolder, data: D, position: Int
+                    view: View, holder: RecyclerView.ViewHolder, data: D, position: Int
             ) {
                 listener.invoke(view, holder, data, position)
             }
@@ -234,18 +215,18 @@ open class NormalRvAdapter<D> constructor(
      */
     open fun setOnItemLongClickListener(listener: ((view: View, holder: RecyclerView.ViewHolder, data: D, position: Int) -> Boolean)) {
         setOnItemLongClickListener(
-            DATA_ITEM_TYPE,
-            object :
-                RvItemListener.OnItemLongClickListener<D> {
-                override fun onItemLongClick(
-                    view: View,
-                    holder: RecyclerView.ViewHolder,
-                    data: D,
-                    position: Int
-                ): Boolean {
-                    return listener.invoke(view, holder, data, position)
-                }
+                DATA_ITEM_TYPE,
+                object :
+                    RvItemListener.OnItemLongClickListener<D> {
+                    override fun onItemLongClick(
+                            view: View,
+                            holder: RecyclerView.ViewHolder,
+                            data: D,
+                            position: Int
+                    ): Boolean {
+                        return listener.invoke(view, holder, data, position)
+                    }
 
-            })
+                })
     }
 }

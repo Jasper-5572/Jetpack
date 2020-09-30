@@ -11,6 +11,7 @@ import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 
 /**
  *@author   Jasper
@@ -81,7 +82,12 @@ open class BaseDialog constructor(private val cancelable: Boolean = false,
         }
         show(fragment.parentFragmentManager, this.javaClass.name)
     }
-
+    open fun onShow(fragmentActivity: FragmentActivity) {
+        if (dialog?.isShowing == true) {
+            return
+        }
+        show(fragmentActivity.supportFragmentManager, this.javaClass.name)
+    }
     override fun dismiss() {
         if ((dialog?.isShowing == true).not()) {
             return

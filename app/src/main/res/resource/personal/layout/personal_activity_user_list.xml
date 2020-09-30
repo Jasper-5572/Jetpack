@@ -5,26 +5,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize">
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="?attr/colorPrimary"-->
+<!--        android:minHeight="?attr/actionBarSize">-->
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tool_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-    </com.google.android.material.appbar.AppBarLayout>
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/tool_bar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="?attr/colorPrimary"-->
+<!--            android:minHeight="?attr/actionBarSize"-->
+<!--            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+<!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/smart_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

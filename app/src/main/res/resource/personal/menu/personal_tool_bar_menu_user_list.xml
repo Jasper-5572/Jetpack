@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Jasper-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/personal_ic_add"
+        android:title="ADD"
+        app:showAsAction="always"
+        tools:ignore="HardcodedText" />
+    <!--    <item android:id="@+id/action_notifications"-->
+    <!--        android:title="notifications"-->
+    <!--        android:icon="@mipmap/ic_notifications"-->
+    <!--        app:showAsAction="ifRoom"/>-->
+<!--    <item-->
+<!--        android:id="@+id/action_settings"-->
+<!--        android:icon="@mipmap/ic_launcher"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="setting"-->
+<!--        app:showAsAction="ifRoom" />-->
+</menu>

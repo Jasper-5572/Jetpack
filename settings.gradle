@@ -1,3 +1,5 @@
+include ':framework-router'
+include ':framework-util'
 include ':base'
 rootProject.name='Jetpack'
 include ':app'

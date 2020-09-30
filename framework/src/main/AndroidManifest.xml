@@ -2,6 +2,7 @@
     package="com.android.jasper.framework" >
 
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application>
         <provider
             android:authorities="${applicationId}.frameworkFileProvider"

@@ -2,15 +2,15 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-cache-path
         name="jasper_framework_external_cache_path "
-        path="download"/>
+        path="jasperDownload"/>
     <cache-path
         name="jasper_framework_cache_path"
-        path="download"/>
+        path="jasperDownload"/>
 
     <external-path
         name="jasper_framework_external_path"
-        path="download"/>
+        path="jasperDownload"/>
     <external-files-path
         name="jasper_framework_external_files_path"
-        path="download"/>
+        path="jasperDownload"/>
 </paths>
